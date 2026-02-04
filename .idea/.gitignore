@@ -1,0 +1,34 @@
+# Сборка и артефакты
+target/
+build/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Настройки IDE
+.idea/
+*.iml
+*.iws
+.settings/
+.project
+.classpath
+.metadata/
+.vscode/
+.settings/
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.temp
+logs/
+*.bak
+
+# Операционная система
+.DS_Store
+Thumbs.db
+
+# Переменные окружения и секреты
+.env
+secret.properties
