@@ -1,11 +1,14 @@
 public class MySimpleHashMap<Key, Value> {
     private EntryPair<Key, Value>[] table; // массив ячеек с первой парой в цепочке
-    private static final int DEFAULT_CAPASITY = 16; // начальный размер массива
+    private static final int DEFAULT_CAPASITY = 8; // начальный размер массива
+    private static final float LOAD_FACTOR = 0.75f; // коэффициент загрузки
     private int size; // количество записанных элементов
+    private int treashold; // пороговое значение (размер массива * коэффициент загрузки)
 
     public MySimpleHashMap() {
         table = new EntryPair[DEFAULT_CAPASITY]; // создаем новый массив дефолтного размера
         size = 0;
+        treashold = (int) (DEFAULT_CAPASITY * LOAD_FACTOR);
     }
 
     // хэш-функция для определения индекса ячейки
@@ -13,13 +16,49 @@ public class MySimpleHashMap<Key, Value> {
         return Math.abs(key.hashCode()) % table.length;
     }
 
+    private int getIndexForNewTable(Key key, int newCapasity) {
+        return Math.abs(key.hashCode()) % newCapasity;
+    }
+
     // функция эквивалентности ключей
     private boolean keysEqual(Key key1, Key key2) {
         return (key1 == key2) || (key1 != null && key1.equals(key2));
     }
 
-    // метод вставки новой пары ключ-значение
+    // метод расширения таблицы (в 2 раза)
+    private void resize() {
+        int newCapasity = table.length * 2;
+        EntryPair<Key, Value>[] newTable = new EntryPair[newCapasity];
+
+        // обновляем порог для новой ёмкости
+        treashold = (int) (newCapasity * LOAD_FACTOR);
+
+        // перехэшируем все элементы из старой таблицы с учетом емкости новой
+        for (EntryPair<Key, Value> oldEntryPair : table) {
+            while (oldEntryPair != null) {
+                Key key = oldEntryPair.key;
+                int newIndex = getIndexForNewTable(key, newCapasity);
+
+                // вставляем в новую таблицу в начало цепочки
+                EntryPair<Key, Value> temp = oldEntryPair.next;
+                oldEntryPair.next = newTable[newIndex];
+                newTable[newIndex] = oldEntryPair;
+
+                // переходим к следующей паре в старой цепочке
+                oldEntryPair = temp;
+            }
+        }
+        // заменяем старую таблицу на новую
+        table = newTable;
+    }
+
+    // метод вставки новой пары ключ-значение с проверкой на необходимость расширения
     public Value put(Key key, Value value) {
+        // проверяем, необходимо ли расширение
+        if (size >= treashold) {
+            resize();
+        }
+
         int index = getBucketIndex(key); // находим индекс ячейки по хэшу ключа
 
         EntryPair<Key, Value> entryPair = table[index]; // получаем первую пару в цепочке

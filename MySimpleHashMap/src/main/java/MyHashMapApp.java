@@ -20,5 +20,19 @@ public class MyHashMapApp {
         phoneNumbers.remove("Скорая");
         System.out.println("Скорая нам не понадобится, количество записей: " + phoneNumbers.size());
 
+        phoneNumbers.put("Друг1", 9081111111L);
+        phoneNumbers.put("Друг2", 9082222222L);
+        phoneNumbers.put("Друг3", 9083333333L);
+        phoneNumbers.put("Друг4", 9084444444L);
+        phoneNumbers.put("Друг5", 9085555555L);
+        phoneNumbers.put("Друг6", 9086666666L);
+        phoneNumbers.put("Друг7", 9087777777L);
+        System.out.println("Таблица расширена. Количество записей: " + phoneNumbers.size());
+
+
+
+
+
+
     }
 }
